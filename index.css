@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: 105px;
+    overflow: hidden;
+
+}
+
+.box {
+    background-color: gray;
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+}
