@@ -1,3 +1,29 @@
+   // this is a master function
+async function getWordArray(n){
+    let wordsToDisplay = [];
+    do{
+        // const authorList = await getAllAuthors()
+        const authorList = [`Anne Bronte`, `Mark Twain`]
+        const authorName = selectRandom(authorList);
+        let randomPoem = await getPoem(authorName);
+
+        // this could be a function
+        randomPoem = removeLineBreaksAndTrim(randomPoem)
+        randomPoem = randomPoem.join(` `).toLowerCase();
+        randomPoem = removePunctuationAndNumbers(randomPoem);
+
+        let arrayOfWords = randomPoem.split(` `);
+        let { firstWords, remainingWords } = extractFirstWords(100, arrayOfWords)
+        wordsToDisplay = wordsToDisplay.concat(firstWords)
+
+    }while(wordsToDisplay.length < n)
+    return wordsToDisplay;
+}
+
+
+console.log(getWordArray(600))
+
+
 async function getAllAuthors(){
     try{
         const response = await fetch(`https://poetrydb.org/author`);
@@ -35,37 +61,55 @@ function removeLineBreaksAndTrim(array){
     return array.filter((line) => line != ``).map((filteredLine) => filteredLine.trim());
 }
 
-const punctuationMarks = [
-    '`', '~', '!', '@', '#', '$', '%', '^', '&',
-    '*', '(', ')', '-', '_', '=', '+', '[',
-    ']', '{', '}', '\\', '|', '/', ';', ':', "'",
-    '"', ',', '.', '<', '>', '/', '?'
-  ];
+function removePunctuationAndNumbers(text) {
+    text = text.replace(/--/g, ' ');
+    const pattern = /[\.,?!`~@#$%^&*()-_=+[\]{}\\|;:'"<>/0-9]/g;
+    const newText = text.replace(pattern, '');
+    return newText;
+   }
 
-function removePunctuation(string, removableCharList){
-    let cleanCharacterList = [];
-    for (let char of string){
-        if(!removableCharList.includes(char)){
-            cleanCharacterList.push(char);
-        }
+function extractFirstWords(n, wordArray){
+    let firstWords = [];
+    let remainingWords = [];
+    if (wordArray.length > n){
+        firstWords = wordArray.slice(0, n);
+        remainingWords = wordArray.slice(n);
+    }else{
+        firstWords = wordArray;
+        remainingWords = [];
     }
-    return cleanCharacterList
+    return { firstWords, remainingWords };
 }
 
-async function getRawText(){
-    // const authorList = await getAllAuthors()
-    const authorList = [`Anne Bronte`, `Edgar Allan Poe`]
-    const authorName = selectRandom(authorList);
-    console.log(authorName);
-    let randomPoem = await getPoem(authorName);
-    let toReturn = randomPoem.join(` `);
-    toReturn = removePunctuation(toReturn, punctuationMarks)
-    return toReturn
+// let kaka = [`one`,`two`,`three`,`four`]
+// let { firstWords: stuf1, remainingWords:stuf2 } = extractFirstWords(9, kaka);
+// console.log(stuf1, stuf2 )
+
+
+
+
+function addWordsToHTML(sentence){
+    let container = document.querySelector('.words');
+    let currentWord = document.createElement('div');
+    currentWord.className = 'word';
+
+    sentence.forEach((char, index) => {
+        if (char === ' ') {
+            container.appendChild(currentWord);
+            currentWord = document.createElement('div');
+            currentWord.className = 'word';
+        } else {
+            let span = document.createElement('span');
+            span.textContent = char;
+            currentWord.appendChild(span);
+        }
+        if (index === sentence.length - 1) {
+            container.appendChild(currentWord);
+        }
+    });
 }
 
 
-
-console.log(getRawText())
 
 // this tracks window resizing
 // window.addEventListener(`resize`, function(){
@@ -75,34 +119,7 @@ console.log(getRawText())
 
 
 
+// TEST SPACE
 
-
-
-
-// let currentWord = document.createElement('div');
-// currentWord.className = 'word';
-
-// // Select the specific div where you want to add the words
-// let container = document.querySelector('.your-specific-class');
-
-// sentence.forEach((char, index) => {
-//     if (char === ' ') {
-//         // Append the current word to the container and start a new word
-//         container.appendChild(currentWord);
-//         currentWord = document.createElement('div');
-//         currentWord.className = 'word';
-//     } else {
-//         // Append the character to the current word
-//         let span = document.createElement('span');
-//         span.textContent = char;
-//         currentWord.appendChild(span);
-//     }
-
-//     // If it's the last character, append the current word
-//     if (index === sentence.length - 1) {
-//         container.appendChild(currentWord);
-//     }
-// });
-
-
-
+// let someWords = ['w', 'h', 'i', 'l', 'e', ' ', 'o', 'n', ' ', 'm', 'y', ' ', 'l', 'o', 'n', 'e', 'l', 'y', ' ', 'c', 'o', 'u', 'c', 'h', ' ', 'i', ' ', 'l', 'i', 'e', ' ', 'i', ' ', 's', 'e', 'l', 'd', 'o', 'm', ' ', 'f', 'e', 'e', 'l', ' ', 'm', 'y', 's', 'e', 'l', 'f', ' ', 'a', 'l', 'o', 'n', 'e', ' ', 'f', 'o', 'r', ' ', 'f', 'a', 'n', 'c', 'y', ' ', 'f', 'i', 'l', 'l', 's', ' ', 'm', 'y', ' ', 'd', 'r', 'e', 'a', 'm', 'i', 'n', 'g', ' ', 'e', 'y', 'e', ' ', 'w', 'i', 't', 'h', ' ', 's', 'c', 'e', 'n', 'e']
+// addWordsToHTML(someWords)
