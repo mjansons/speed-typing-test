@@ -3,18 +3,29 @@
 * {
     font-family: "Roboto Mono";
 }
-.container {
+
+.words {
+    margin: 0px 20%;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    height: 105px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 95px;
     overflow: hidden;
 
 }
 
-.box {
-    background-color: gray;
-    width: 100px;
-    height: 100px;
-    border: 1px solid black;
+.word {
+    margin: 5px;
+}
+
+.wrong {
+    color: red;
+}
+.correct {
+    color: rgb(85, 148, 51);
+}
+
+.excess {
+    color: blue;
 }
