@@ -19,12 +19,26 @@
     margin: 5px;
 }
 
-.wrong {
+.char {
+    color: black;
+}
+
+.wrong-char {
     color: red;
 }
-.correct {
+
+.correct-char {
     color: rgb(85, 148, 51);
 }
-.excess {
+
+.excess-char {
     color: blue;
+}
+
+.wrong-word {
+    margin: 5px;
+}
+
+.correct-word {
+    margin: 5px;
 }
