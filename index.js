@@ -17,14 +17,79 @@ function addWordsToHTML(wordList) {
     });
 }
 
+// attempt to write a main function for this module if it could be a module
 async function doSomething(){
     const wordBank = await getWords(60, true)
     addWordsToHTML(wordBank)
 
 }
 
+// TEST:
+const wordBank = ["apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
+addWordsToHTML(wordBank)
+
+// Initialize variables
+let currentWordIndex = 0;
+let currentCharIndex = 0;
 
 
+let allWords = document.querySelectorAll(`.word`)
+let allChars = allWords[currentWordIndex].children;
+
+
+// Function to move to the next character or word
+function moveToNextChar(character) {
+    // If the current character matches the pressed key, move to the next character
+    if (allWords[currentWordIndex].children[currentCharIndex].textContent === character) {
+        allChars = allWords[currentWordIndex].children;
+        allChars[currentCharIndex].classList.add(`correct`)
+        currentCharIndex++;
+    }else{
+        allChars = allWords[currentWordIndex].children;
+        allChars[currentCharIndex].classList.add(`wrong`)
+        currentCharIndex++;
+    }
+}
+
+// Listen for keydown events
+document.addEventListener('keydown', function(event) {
+    if (event.code === `Space`) {
+        currentWordIndex++;
+        currentCharIndex = 0;
+    }else if(event.code === `Backspace`){
+        console.log(`Before backspace Char Index: ${currentCharIndex}`)
+
+        if(currentCharIndex === 0){
+            // allow to move back if word index is more than 0 AND
+            // if previous word char classes contain at least one wrong
+            // then I will make current word index -- and
+            // set char index to last child and take class away
+        }
+        if(allWords[currentWordIndex])
+        // if char has class excess:
+            // remove char
+            // char index -1
+        // if char index is < 0:
+            // then char index -1
+
+
+        currentCharIndex--
+        allChars[currentCharIndex].className = ``;
+
+
+        console.log(`After backspace Char Index: ${currentCharIndex}`)
+    }else if(currentCharIndex < allWords[currentWordIndex].children.length) {
+        moveToNextChar(event.key);
+    }else{
+        // excess character adding
+        let excessChar = document.createElement('span');
+        excessChar.textContent = event.key;
+        allWords[currentWordIndex].appendChild(excessChar);
+        allChars[currentCharIndex].classList.add(`excess`)
+        currentCharIndex++;
+
+    }
+});
 
 
 
@@ -36,119 +101,14 @@ async function doSomething(){
 
 
 
-// TEST SPACE
-
-
-// doSomething()
-
-
-// this will allow me to find the current character
-// questino tho, what happens when some words are removed?
-
-// let cursorLocation = 0;
-// let wordLoaction = 0;
-
-
-
-// function getWordElement(charElement) {
-//     return charElement.parentElement;
-// }
-// document.addEventListener(`keydown`, function(event){
-//     if (event.key == allChars[cursorLocation].innerText){
-//         allChars[cursorLocation].classList.add(`correct`);
-//         cursorLocation ++;
-//     }else{
-//         allChars[cursorLocation].classList.add(`wrong`);
-//         cursorLocation ++;
-//     }
-
-// })
-
-const wordBank = ["apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
-addWordsToHTML(wordBank)
-
-// Initialize variables
-let currentWordIndex = 0;
-let currentCharIndex = 0;
-
-let allChars = document.querySelectorAll(`span`)
-let allWords = document.querySelectorAll(`.word`)
-
-
-
-async function addClassToSpan(className, charIndex){
-    allChars[charIndex].classList.add(`${className}`);
-}
-
-// Function to move to the next character or word
-function moveToNextChar(character) {
-    // If the current character matches the pressed key, move to the next character
-    if (allWords[currentWordIndex].children[currentCharIndex].textContent === character) {
-        allChars = allWords[currentWordIndex].children;
-        addClassToSpan(`correct`, currentCharIndex)
-        currentCharIndex++;
-        // If we've reached the end of the word, move to the next word
-        if (currentCharIndex >= allWords[currentWordIndex].children.length) {
-            console.log()
-        }
-    }else{
-        addClassToSpan(`wrong`, currentCharIndex)
-        currentCharIndex++;
-        // If we've reached the end of the word, move to the next word
-        if (currentCharIndex >= allWords[currentWordIndex].children.length) {
-            console.log()
-        }
-    }
-}
-
-// Listen for keydown events
-document.addEventListener('keydown', function(event) {
-    console.log(event)
-    console.log(`Char Index Before Button Press: ${currentCharIndex}`)
-    console.log(`Word Index Before Button Press:${currentWordIndex}`)
-    if (event.code === `Space`) {
-        currentWordIndex++;
-        currentCharIndex = 0;
-        console.log(`SPACE Char Index After Button Press: ${currentCharIndex}`)
-        console.log(`SPACE Word Index After Button Press: ${currentWordIndex}`)
-    } else if(currentCharIndex < allWords[currentWordIndex].children.length) {
-        moveToNextChar(event.key);
-        console.log(`REG Char Index After Button Press: ${currentCharIndex}`)
-        console.log(`REG Word Index After Button Press: ${currentWordIndex}`)
-    }else{
-        allWords[currentWordIndex]
-        console.log(`cant be movin forwad`)
-        let span = document.createElement('span');
-        span.textContent = event.key;
-        allWords[currentWordIndex].appendChild(span);
-        addClassToSpan(`excess`, currentCharIndex)
-        currentCharIndex++;
-    }
-});
-
-
-// if a user presses space, I need to jump to the next word....
-
-
-// add even listener for specific keystrokes
-// if matching key pressed
-    // update color to green
-    // move to next letter
-// else if not matching key pressed
-    // update color to red
-    // move to next letter
-
-// if space is pressed
-    // move to the next word
-
-
-// if backspace pressed
-    // change the current character class to regular
-    // if current letter index > 0 and current word index is NOT 0
-        // change current
-    // move to previous letter
-
-
-
-
-// list
+// BACKSPACE LOGIC:
+    // if char index is 0;
+        // allow to move back if word index is more than 0 AND
+        // if previous word char classes contain at least one wrong
+        // then I will make current word index -- and
+        // set char index to last child and take class away
+    // if char has class excess:
+        // remove char
+        // char index -1
+    // if char index is < 0:
+        // then char index -1
