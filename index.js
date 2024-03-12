@@ -29,10 +29,9 @@ async function doSomething(){
 const wordBank = ["apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
 addWordsToHTML(wordBank)
 
-// Initialize variables
+// Initial variables
 let currentWordIndex = 0;
 let currentCharIndex = 0; // this could be cursor location
-
 let allWords = document.querySelectorAll(`.word`)
 
 document.addEventListener('keydown', function(event) {
@@ -66,13 +65,13 @@ document.addEventListener('keydown', function(event) {
             currentCharIndex--;
             lastTypedChar.className = `char`;
         }
-    // to move to next the character
     }else if(currentCharIndex < currentWord.children.length && event.location == 0 && event.key != `CapsLock` && event.key != `Tab`) {
+    // to move to the next character
         let currentCharacter = currentWord.children[currentCharIndex];
         currentCharacter.className = evaluateCharacter(currentCharacter, event.key);
         currentCharIndex++;
-    // to add an excess character
     }else if(event.location == 0 && event.key != `CapsLock` && event.key != `Tab`){
+    // to add an excess character
         let excessChar = document.createElement('span');
         excessChar.textContent = event.key;
         excessChar.className = `excess-char`;
@@ -108,27 +107,9 @@ function findLastCharIndex(nodeList, charclass) {
 }
 
 
-
-
-
-
 // this tracks window resizing
 // window.addEventListener(`resize`, function(){
 //     const divWidth = document.querySelector(`.container`).offsetWidth;
 //     console.log(divWidth);
 // })
-
-
-
-// BACKSPACE LOGIC:
-    // if char index is 0;
-        // allow to move back if word index is more than 0 AND
-        // if previous word char classes contain at least one wrong-char
-        // then I will make current word index -- and
-        // set char index to last child and take class away
-    // if char has class excess:
-        // remove char
-        // char index -1
-    // if char index is < 0:
-        // then char index -1
 
