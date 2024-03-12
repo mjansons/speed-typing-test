@@ -41,7 +41,7 @@ let allChars = allWords[currentWordIndex].children;
 // Listen for keydown events
 document.addEventListener('keydown', function(event) {
     let currentWord = allWords[currentWordIndex]
-    let currentChar = allWords[currentWordIndex].children[currentCharIndex]
+    let currentChar = allWords[currentWordIndex].children[currentCharIndex - 1]
 
     if (event.code == `Space`) {
         if(evaluateWord()){
@@ -51,23 +51,34 @@ document.addEventListener('keydown', function(event) {
             console.log(`you shall not pass`)
         }
 
+
     }else if(event.code == `Backspace`){
+        console.log(`Before wordINdex: ${currentWordIndex}, charIndex${currentCharIndex}`)
         let previousChar = currentWord.children[(currentCharIndex - 1)]
 
+        // regular excess condition
         if(currentCharIndex > 0 && previousChar.className == `excess-char`){
+            console.log(`excess condition`)
             currentWord.children[(currentCharIndex - 1)].remove();
             currentCharIndex --;
+        // entering previous word logic
         }else if(currentCharIndex === 0 && currentWordIndex > 0 && allWords[(currentWordIndex - 1)].className !== `correct-word`){
+            console.log(`correct previous word condition`)
             currentWordIndex--;
+            ///// LOGIC FOR JUMPING TO THE LAST TYPED LETTER IN PREVIOUS WORD
             currentCharIndex = findCharIndex(allWords[currentWordIndex].children, `char`)
+        // regular letter removal logic
         }else if(currentCharIndex > 0){
-            currentCharIndex--
+            console.log(`regular condition`)
+            currentCharIndex--;
             currentChar.className = `char`;
         }
+            console.log(`After everything wordINdex: ${currentWordIndex}, charIndex: ${currentCharIndex}`)
 
     }else if(currentCharIndex < allWords[currentWordIndex].children.length) {
         moveToNextChar(event.key);
     }else{
+        // excess character adding
         let excessChar = document.createElement('span');
         excessChar.textContent = event.key;
         excessChar.className = `excess-char`;
