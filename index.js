@@ -38,43 +38,36 @@ let allWords = document.querySelectorAll(`.word`)
 let allChars = allWords[currentWordIndex].children;
 
 
-
 // Listen for keydown events
 document.addEventListener('keydown', function(event) {
     let currentWord = allWords[currentWordIndex]
     let currentChar = allWords[currentWordIndex].children[currentCharIndex]
 
-    if (event.code === `Space`) {
-        evaluateWord();
-        currentWordIndex++;
-        currentCharIndex = 0;
-    }else if(event.code === `Backspace`){
-        console.log(`Before wordINdex: ${currentWordIndex}, charIndex${currentCharIndex}`)
+    if (event.code == `Space`) {
+        if(evaluateWord()){
+            currentWordIndex++;
+            currentCharIndex = 0;
+        }else{
+            console.log(`you shall not pass`)
+        }
+
+    }else if(event.code == `Backspace`){
         let previousChar = currentWord.children[(currentCharIndex - 1)]
-        
-        // debugger
-        // regular excess condition
+
         if(currentCharIndex > 0 && previousChar.className == `excess-char`){
-            console.log(`excess condition`)
             currentWord.children[(currentCharIndex - 1)].remove();
             currentCharIndex --;
-        // entering previous word logic
         }else if(currentCharIndex === 0 && currentWordIndex > 0 && allWords[(currentWordIndex - 1)].className !== `correct-word`){
-            console.log(`correct previous word condition`)
             currentWordIndex--;
-            currentCharIndex = (allWords[currentWordIndex].children.length);
-            currentChar.className = `char`;
-        // regular letter removal logic
+            currentCharIndex = findCharIndex(allWords[currentWordIndex].children, `char`)
         }else if(currentCharIndex > 0){
-            console.log(`regular condition`)
             currentCharIndex--
-            allWords[currentWordIndex].children[currentCharIndex].className = `char`;
+            currentChar.className = `char`;
         }
-            console.log(`After everything wordINdex: ${currentWordIndex}, charIndex${currentCharIndex}`)
+
     }else if(currentCharIndex < allWords[currentWordIndex].children.length) {
         moveToNextChar(event.key);
     }else{
-        // excess character adding
         let excessChar = document.createElement('span');
         excessChar.textContent = event.key;
         excessChar.className = `excess-char`;
@@ -101,13 +94,27 @@ function moveToNextChar(character) {
 
 function evaluateWord(){
     const letters = Array.from(allWords[currentWordIndex].children)
-    if(letters.some((item) => item.className == `wrong-char` || item.className == `excess-char` || item.className == `char`)){
+    if (letters.every((item) => item.className == `char`)){
+        return false
+    }else if(letters.some((item) => item.className == `wrong-char` || item.className == `excess-char` || item.className == `char`)){
         allWords[currentWordIndex].className = `wrong-word`
+        return true
     }else{
         allWords[currentWordIndex].className = `correct-word`
+        return true
     }
 }
 
+function findCharIndex(nodeList, charclass) {
+    let charIndex = nodeList.length;
+    for (const [index, span] of Array.from(nodeList).entries()) {
+        if (span.className === charclass) {
+            charIndex = index;
+            break;
+        }
+    }
+    return charIndex;
+}
 
 
 
