@@ -50,7 +50,7 @@ document.addEventListener('keydown', function(event) {
             currentWord.className = evaluationResult;
             currentWordIndex++;
             currentCharIndex = 0;
-            allWords[currentWordIndex].children[0].classList.add(`cursor-before`);
+            addNewCursor(allWords[currentWordIndex], 0, `cursor-before`);
         }else{console.log(`\"You shall not pass!\" - Gandalf`)}
 
     }else if(event.code == `Backspace`){
@@ -58,35 +58,43 @@ document.addEventListener('keydown', function(event) {
         if(currentCharIndex > 0 && lastTypedChar.classList.contains(`excess-char`)){
             lastTypedChar.remove();
             currentCharIndex --;
+            addNewCursor(currentWord, (currentCharIndex - 1), `cursor-after`);
+
         // to return to previous word
         }else if(currentCharIndex === 0 && currentWordIndex > 0 && allWords[(currentWordIndex - 1)].className !== `correct-word`){
+            removePreviousCursor(currentWord, currentCharIndex);
             currentWord.className = `word`;
             currentWordIndex--;
-            currentCharIndex = findFirstEmptyCharIndex(allWords[currentWordIndex].children, `char`)
+            currentCharIndex = findFirstEmptyCharIndex(allWords[currentWordIndex].children, `char`);
+            addNewCursor(allWords[currentWordIndex], (currentCharIndex - 1), `cursor-after`);
+
         // to remove regular character
         }else if(currentCharIndex > 0){
             currentCharIndex--;
             lastTypedChar.className = `char`;
+
+            const newIndex = currentCharIndex > 0 ? currentCharIndex - 1 : currentCharIndex;
+            const cursorClass = currentCharIndex > 0 ? `cursor-after` : `cursor-before`;
+            addNewCursor(currentWord, newIndex, cursorClass);
         }
     }else if(currentCharIndex < currentWord.children.length && event.location == 0 && !SpecialKeys.includes(event.key)) {
     // to move to the next character
         removePreviousCursor(currentWord, currentCharIndex);
         currentCharacter.className = evaluateCharacter(currentCharacter, event.key);
-        currentCharacter.classList.add(`cursor-after`)
+        addNewCursor(currentWord, currentCharIndex, `cursor-after`);
         currentCharIndex++;
 
     }else if(event.location == 0 && !SpecialKeys.includes(event.key)){
     // to add an excess character
         removePreviousCursor(currentWord, currentCharIndex);
-        let excessChar = document.createElement('span');
+        const excessChar = document.createElement('span');
         excessChar.textContent = event.key;
         excessChar.className = `excess-char`;
-        excessChar.classList.add(`cursor-after`);
+        excessChar.classList.add(`cursor-after`); //...addNewCursor
         currentWord.appendChild(excessChar);
         currentCharIndex++;
     }
 });
-
 
 function evaluateCharacter(currentChar, pressedKey) {
     return currentChar.innerText === pressedKey ? `correct-char` : `wrong-char`;
@@ -95,11 +103,11 @@ function evaluateCharacter(currentChar, pressedKey) {
 function evaluateWord(nodeArray){
     const letters = Array.from(nodeArray)
     if (letters.every((item) => item.classList.contains(`char`))){
-        return false
+        return false;
     }else if(letters.some((item) => item.classList.contains(`wrong-char`) || item.classList.contains(`excess-char`) || item.classList.contains(`char`))){
-        return `wrong-word`
+        return `wrong-word`;
     }else{
-        return `correct-word`
+        return `correct-word`;
     }
 }
 
@@ -118,8 +126,17 @@ function removePreviousCursor(wordObject, theIndex) {
     if (theIndex > 0){
         const charObject = wordObject.children[theIndex - 1];
         charObject.classList.remove(`cursor-after`);
+    }else{
+        const charObject = wordObject.children[theIndex];
+        charObject.classList.remove(`cursor-before`);
     }
-   }
+
+}
+
+function addNewCursor(wordObject, childIndex, nameOfClass){
+    wordObject.children[childIndex].classList.add(nameOfClass);
+}
+
 
 // this tracks window resizing
 // window.addEventListener(`resize`, function(){
