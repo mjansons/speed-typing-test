@@ -30,55 +30,63 @@ const wordBank = ["apple", "banana", "orange", "pear", "grape", "pineapple", "ki
 addWordsToHTML(wordBank)
 
 // Initial variables
+const SpecialKeys= [`CapsLock`, `Tab`, `Enter`];
 let currentWordIndex = 0;
 let currentCharIndex = 0; // this could be cursor location
 let allWords = document.querySelectorAll(`.word`)
+// set first cursor
+allWords[0].children[0].classList.add('cursor-before');
 
 document.addEventListener('keydown', function(event) {
     let currentWord = allWords[currentWordIndex]
+    let currentCharacter = currentWord.children[currentCharIndex];
     let lastTypedChar = allWords[currentWordIndex].children[currentCharIndex - 1]
     let currentWordChildren = allWords[currentWordIndex].children
 
     if (event.code == `Space`) {
         let evaluationResult = evaluateWord(currentWordChildren);
         if(evaluationResult){
+            removePreviousCursor(currentWord, currentCharIndex);
             currentWord.className = evaluationResult;
             currentWordIndex++;
             currentCharIndex = 0;
-        }else{
-            console.log(`\"You shall not pass!\" - Gandalf`)
-        }
+            allWords[currentWordIndex].children[0].classList.add(`cursor-before`);
+        }else{console.log(`\"You shall not pass!\" - Gandalf`)}
 
     }else if(event.code == `Backspace`){
-        let previousChar = currentWord.children[(currentCharIndex - 1)]
         // to remove excess character
-        if(currentCharIndex > 0 && previousChar.className == `excess-char`){
-            currentWord.children[(currentCharIndex - 1)].remove();
+        if(currentCharIndex > 0 && lastTypedChar.classList.contains(`excess-char`)){
+            lastTypedChar.remove();
             currentCharIndex --;
         // to return to previous word
         }else if(currentCharIndex === 0 && currentWordIndex > 0 && allWords[(currentWordIndex - 1)].className !== `correct-word`){
             currentWord.className = `word`;
             currentWordIndex--;
-            currentCharIndex = findLastCharIndex(allWords[currentWordIndex].children, `char`)
+            currentCharIndex = findFirstEmptyCharIndex(allWords[currentWordIndex].children, `char`)
         // to remove regular character
         }else if(currentCharIndex > 0){
             currentCharIndex--;
             lastTypedChar.className = `char`;
         }
-    }else if(currentCharIndex < currentWord.children.length && event.location == 0 && event.key != `CapsLock` && event.key != `Tab`) {
+    }else if(currentCharIndex < currentWord.children.length && event.location == 0 && !SpecialKeys.includes(event.key)) {
     // to move to the next character
-        let currentCharacter = currentWord.children[currentCharIndex];
+        removePreviousCursor(currentWord, currentCharIndex);
         currentCharacter.className = evaluateCharacter(currentCharacter, event.key);
+        currentCharacter.classList.add(`cursor-after`)
         currentCharIndex++;
-    }else if(event.location == 0 && event.key != `CapsLock` && event.key != `Tab`){
+
+    }else if(event.location == 0 && !SpecialKeys.includes(event.key)){
     // to add an excess character
+        removePreviousCursor(currentWord, currentCharIndex);
         let excessChar = document.createElement('span');
         excessChar.textContent = event.key;
         excessChar.className = `excess-char`;
-        allWords[currentWordIndex].appendChild(excessChar);
+        excessChar.classList.add(`cursor-after`);
+        currentWord.appendChild(excessChar);
         currentCharIndex++;
     }
 });
+
 
 function evaluateCharacter(currentChar, pressedKey) {
     return currentChar.innerText === pressedKey ? `correct-char` : `wrong-char`;
@@ -86,16 +94,16 @@ function evaluateCharacter(currentChar, pressedKey) {
 
 function evaluateWord(nodeArray){
     const letters = Array.from(nodeArray)
-    if (letters.every((item) => item.className == `char`)){
+    if (letters.every((item) => item.classList.contains(`char`))){
         return false
-    }else if(letters.some((item) => item.className == `wrong-char` || item.className == `excess-char` || item.className == `char`)){
+    }else if(letters.some((item) => item.classList.contains(`wrong-char`) || item.classList.contains(`excess-char`) || item.classList.contains(`char`))){
         return `wrong-word`
     }else{
         return `correct-word`
     }
 }
 
-function findLastCharIndex(nodeList, charclass) {
+function findFirstEmptyCharIndex(nodeList, charclass) {
     let charIndex = nodeList.length;
     for (const [index, span] of Array.from(nodeList).entries()) {
         if (span.className === charclass) {
@@ -106,6 +114,12 @@ function findLastCharIndex(nodeList, charclass) {
     return charIndex;
 }
 
+function removePreviousCursor(wordObject, theIndex) {
+    if (theIndex > 0){
+        const charObject = wordObject.children[theIndex - 1];
+        charObject.classList.remove(`cursor-after`);
+    }
+   }
 
 // this tracks window resizing
 // window.addEventListener(`resize`, function(){

@@ -42,3 +42,38 @@
 .correct-word {
     margin: 5px;
 }
+
+/* .words span.correct-char {
+    background: linear-gradient(to right, transparent 2px, black 2px);
+    background-size: 50% 100%;
+    background-repeat: no-repeat;
+} */
+
+span {
+    position: relative;
+}
+
+@keyframes blink {
+    0% {opacity: 0;}
+    50% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.cursor-before::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 1.5px;
+    background-color: #000;
+    animation: blink 1.5s infinite;
+}
+
+.cursor-after::after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 1.5px;
+    left: 95%;
+    background-color: #000;
+    animation: blink 1s infinite;
+}
