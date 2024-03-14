@@ -14,10 +14,9 @@ class SpeedTypingTest{
     async startTest(getAsyncWordsFunction) {
         if (!this.isTestRunning) {
             this.wordsList = await getAsyncWordsFunction(50, this.caseSensitivity);
-            console.log(this.wordsList)
             this.addWordsToHTML(this.wordsList, this.container);
-            this.allWords = document.querySelectorAll(this.container)[0].children;
-            console.log(this.allWords)
+            this.wordContainer = document.querySelectorAll(this.container);
+            this.allWords = this.wordContainer[0].children;
             this.addNewCursor(this.allWords[0], 0, `cursor-before`);
             this.addTestEventListeners();
             this.isTestRunning = true;
@@ -34,7 +33,7 @@ class SpeedTypingTest{
 
     stopTest() {
         if (this.isTestRunning) {
-            this.removeTestEventListeners(); // Use 'this' to call the method
+            this.removeTestEventListeners();
             this.isTestRunning = false;
             // Optionally: Reset test UI elements (clear classes, etc.)
         }
@@ -70,7 +69,7 @@ class SpeedTypingTest{
         this.currentWordChildren = this.allWords[this.currentWordIndex].children
 
         if (event.code == `Space`) {
-            this.handleSpace();
+            this.handleSpaceMove();
         }else if(event.code == `Backspace`){
             this.undoMove();
         }else if(this.currentCharIndex < this.currentWord.children.length && event.location == 0 && !this.specialKeys.includes(event.key)) {
@@ -80,11 +79,12 @@ class SpeedTypingTest{
         }
     }
 
-    handleSpace(){
+    handleSpaceMove(){
         let evaluationResult = this.evaluateWord(this.currentWordChildren);
         if(evaluationResult){
             this.removePreviousCursor(this.currentWord, this.currentCharIndex);
             this.currentWord.className = evaluationResult;
+            console.log(this.areChildrenLongerThanParent())
             this.currentWordIndex++;
             this.currentCharIndex = 0;
             this.addNewCursor(this.allWords[this.currentWordIndex], 0, `cursor-before`);
@@ -170,15 +170,53 @@ class SpeedTypingTest{
     addNewCursor(wordObject, childIndex, nameOfClass){
         wordObject.children[childIndex].classList.add(nameOfClass);
     }
+
+
+    areChildrenLongerThanParent() {
+        const parentLength = this.wordContainer[0].offsetWidth;
+        console.log(`Parent length: ${parentLength}`)
+        // console.log(this.wordContainer)
+
+        let childrenWidth = 0;
+        for (let i = 0; i <= this.currentWordIndex; i++) {
+            childrenWidth = childrenWidth + this.allWords[i].offsetWidth;
+        }
+        console.log(`Total Children length: ${childrenWidth}`)
+        return childrenWidth > parentLength;
+    }
+
+
+
+
+    // when space is pressed
+        // (get the length of the parent div * 2)
+        // get the length of all words until (current word)
+        // if all are more than (parent div * 2),
+            // update scoring somehow / or pass the words, should the score be already updated up until that point?
+            // remove all the words until the current word
+
 }
 
-// function fakeWordFunction(){
-//     return ["apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
-// }
 
-const testInstance = new SpeedTypingTest(`.words`);
-testInstance.startTest(getWords);
 
+
+function fakeWordFunction(){
+    return ["apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry", "apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
+}
+
+// const testInstance = new SpeedTypingTest(`.words`, true);
+// testInstance.startTest(fakeWordFunction);
+
+// console.log(testInstance.allWords)
+
+
+async function runTest() {
+    const testInstance = new SpeedTypingTest(`.words`, true);
+    await testInstance.startTest(fakeWordFunction);
+    // console.log(testInstance.areChildrenLongerThanParent())
+}
+runTest();
+// testInstance.getElementLengthPX(
 
 
 
