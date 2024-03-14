@@ -58,6 +58,8 @@ function formatText(array) {
         .map((filteredLine) => filteredLine.trim())
         .join(' ')
         .replace(/--/g, ' ')
+        .replace(/  /g, ' ')
+        .replace(/  /g, ' ')
         .replace(/  /g, ' ');
 }
 // remove punctuation, numbers, toLowerCase
