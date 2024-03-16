@@ -2,13 +2,14 @@ import getWords from "./api.js";
 
 
 class SpeedTypingTest{
-    constructor(container, caseSensitivity = false) {
+    constructor(container, getAsyncWordsFunction, normalizedText = false) {
         this.isTestRunning = false;
         this.specialKeys = [`CapsLock`, `Tab`, `Enter`];
         this.container = container;
         this.currentWordIndex = 0;
         this.currentCharIndex = 0;
-        this.caseSensitivity = caseSensitivity
+        this.normalizedText = normalizedText;
+        this.getAsyncWordsFunction = getAsyncWordsFunction;
 
         this.correctChars = 0;
         this.wrongChars = 0;
@@ -18,9 +19,9 @@ class SpeedTypingTest{
 
     }
 
-    async startTest(getAsyncWordsFunction) {
+    async startNewTest() {
         if (!this.isTestRunning) {
-            this.wordsList = await getAsyncWordsFunction(50, this.caseSensitivity);
+            this.wordsList = await this.getAsyncWordsFunction(60, this.normalizedText);
             this.addWordsToHTML(this.wordsList, this.container);
             this.wordContainer = document.querySelectorAll(this.container);
             this.allWords = this.wordContainer[0].children;
@@ -30,19 +31,28 @@ class SpeedTypingTest{
         }
     }
 
-    restartTest() {
+    restartSameTest() {
         this.stopTest();
         this.currentWordIndex = 0;
         this.currentCharIndex = 0;
-        this.isTestRunning = false;
-        this.startTest();
+
+        this.correctChars = 0;
+        this.wrongChars = 0;
+        this.missedChars = 0;
+        this.excessChars = 0;
+
+        this.addWordsToHTML(this.wordsList, this.container);
+        this.wordContainer = document.querySelectorAll(this.container);
+        this.allWords = this.wordContainer[0].children;
+        this.addNewCursor(this.allWords[0], 0, `cursor-before`);
+        this.addTestEventListeners();
+        this.isTestRunning = true;
     }
 
     stopTest() {
         if (this.isTestRunning) {
             this.removeTestEventListeners();
             this.isTestRunning = false;
-            // Optionally: Reset test UI elements (clear classes, etc.)
         }
     }
 
@@ -83,6 +93,10 @@ class SpeedTypingTest{
             this.moveByOneCharacter(event);
         }else if(event.location == 0 && !this.specialKeys.includes(event.key)){
             this.addExcessCharacter(event);
+        }else if(event.key == `Escape`){
+            // start brand new test
+        }else if(event.key == `Enter`){
+            // restart current test
         }
     }
 
@@ -96,6 +110,8 @@ class SpeedTypingTest{
                 this.updateActualScoreCharScore(topRowElements)
                 this.removeHTMLelements(topRowElements)
                 this.currentWordIndex = this.currentWordIndex - (topRowElements.length - 1)
+                this.addMoreWords(topRowElements.length)
+                console.log(this.wordsList)
             }else{
                 this.currentWordIndex++;
             }
@@ -228,6 +244,14 @@ class SpeedTypingTest{
         }
     }
 
+    async addMoreWords(amount) {
+        const newWords = await this.getAsyncWordsFunction(amount, this.normalizedText);
+        this.wordsList = this.wordsList.concat(newWords);
+        this.addWordsToHTML(newWords, this.container);
+        this.wordContainer = document.querySelectorAll(this.container);
+        this.allWords = this.wordContainer[0].children;
+    }
+
 
     // then I need a function for replacing the amount that was removed
 
@@ -250,15 +274,13 @@ function fakeWordFunction(){
 }
 
 // const testInstance = new SpeedTypingTest(`.words`, true);
-// testInstance.startTest(fakeWordFunction);
+// testInstance.startNewTest(fakeWordFunction);
 
 // console.log(testInstance.allWords)
 
-
 async function runTest() {
-    const testInstance = new SpeedTypingTest(`.words`, true);
-    await testInstance.startTest(fakeWordFunction);
-    // console.log(testInstance.areChildrenLongerThanParent())
+    const testInstance = new SpeedTypingTest(`.words`, getWords, true);
+    await testInstance.startNewTest();
 }
 
 runTest();
