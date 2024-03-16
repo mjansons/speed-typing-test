@@ -9,6 +9,13 @@ class SpeedTypingTest{
         this.currentWordIndex = 0;
         this.currentCharIndex = 0;
         this.caseSensitivity = caseSensitivity
+
+        this.correctChars = 0;
+        this.wrongChars = 0;
+        this.missedChars = 0;
+        this.excessChars = 0;
+
+
     }
 
     async startTest(getAsyncWordsFunction) {
@@ -84,8 +91,14 @@ class SpeedTypingTest{
         if(evaluationResult){
             this.removePreviousCursor(this.currentWord, this.currentCharIndex);
             this.currentWord.className = evaluationResult;
-            console.log(this.areChildrenLongerThanParent())
-            this.currentWordIndex++;
+            if(this.isLastElementOnNewRow()){
+                const topRowElements = this.getTopRowElements()
+                this.updateActualScoreCharScore(topRowElements)
+                this.removeHTMLelements(topRowElements)
+                this.currentWordIndex = this.currentWordIndex - (topRowElements.length - 1)
+            }else{
+                this.currentWordIndex++;
+            }
             this.currentCharIndex = 0;
             this.addNewCursor(this.allWords[this.currentWordIndex], 0, `cursor-before`);
         }else{console.log(`\"You shall not pass!\" - Gandalf`)}
@@ -171,19 +184,54 @@ class SpeedTypingTest{
         wordObject.children[childIndex].classList.add(nameOfClass);
     }
 
-
-    areChildrenLongerThanParent() {
-        const parentLength = this.wordContainer[0].offsetWidth;
-        console.log(`Parent length: ${parentLength}`)
-        // console.log(this.wordContainer)
-
-        let childrenWidth = 0;
-        for (let i = 0; i <= this.currentWordIndex; i++) {
-            childrenWidth = childrenWidth + this.allWords[i].offsetWidth;
-        }
-        console.log(`Total Children length: ${childrenWidth}`)
-        return childrenWidth > parentLength;
+    isLastElementOnNewRow() {
+        const firstRowoffsetTop = this.allWords[0].offsetTop;
+        const currentWordOffsetLeft = this.allWords[this.currentWordIndex].offsetLeft;
+        const currentWordOffsetTop = this.allWords[this.currentWordIndex].offsetTop;
+        const nextWordOffsetLeft = this.allWords[this.currentWordIndex + 1].offsetLeft;
+        return (currentWordOffsetTop > firstRowoffsetTop && nextWordOffsetLeft < currentWordOffsetLeft);
     }
+
+    getTopRowElements() {
+        const defaultoffsetTop = this.allWords[0].offsetTop;
+        const topRowWords = [];
+
+        for (let i = 0; i < this.allWords.length ; i++){
+            if(this.allWords[i].offsetTop > defaultoffsetTop){
+                break
+            }else{
+                topRowWords.push(this.allWords[i])
+            }
+        }
+        return topRowWords
+    }
+
+    updateActualScoreCharScore(HTMLcollection){
+        for (let i = 0; i < HTMLcollection.length; i++){
+            for (let j = 0; j < HTMLcollection[i].children.length; j++){
+                if(HTMLcollection[i].children[j].classList.contains(`correct-char`)){
+                    this.correctChars++
+                }else if(HTMLcollection[i].children[j].classList.contains(`wrong-char`)){
+                    this.wrongChars++
+                }else if(HTMLcollection[i].children[j].classList.contains(`char`)){
+                    this.missedChars++
+                }else if(HTMLcollection[i].children[j].classList.contains(`excess-char`)){
+                    this.excessChars++
+                }
+            }
+        }
+    }
+
+    removeHTMLelements(HTMLcollection){
+        for (let i = HTMLcollection.length - 1; i >= 0; i--) {
+            HTMLcollection[i].remove();
+        }
+    }
+
+
+    // then I need a function for replacing the amount that was removed
+
+}
 
 
 
@@ -193,15 +241,12 @@ class SpeedTypingTest{
         // get the length of all words until (current word)
         // if all are more than (parent div * 2),
             // update scoring somehow / or pass the words, should the score be already updated up until that point?
-            // remove all the words until the current word
-
-}
-
+            // remove top line
 
 
 
 function fakeWordFunction(){
-    return ["apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry", "apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
+    return ["Apple", "Banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry", "apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
 }
 
 // const testInstance = new SpeedTypingTest(`.words`, true);
@@ -215,6 +260,7 @@ async function runTest() {
     await testInstance.startTest(fakeWordFunction);
     // console.log(testInstance.areChildrenLongerThanParent())
 }
+
 runTest();
 // testInstance.getElementLengthPX(
 
