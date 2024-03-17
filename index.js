@@ -102,6 +102,7 @@ class SpeedTypingTest{
     }
 
     handleKeyDownEvent(event){
+        console.log(event.key)
         this.currentWord = this.allWords[this.currentWordIndex]
         this.currentCharacter = this.currentWord.children[this.currentCharIndex];
         this.lastTypedChar = this.allWords[this.currentWordIndex].children[this.currentCharIndex - 1]
@@ -111,6 +112,7 @@ class SpeedTypingTest{
             this.startTimer()
             this.isTestRunning = true;
         }
+
         if (event.code == `Space`) {
             this.handleSpaceMove();
         }else if(event.code == `Backspace`){
