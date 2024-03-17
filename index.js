@@ -2,37 +2,56 @@ import getWords from "./api.js";
 
 
 class SpeedTypingTest{
-    constructor(container, getAsyncWordsFunction, normalizedText = false) {
-        this.isTestRunning = false;
-        this.specialKeys = [`CapsLock`, `Tab`, `Enter`];
-        this.container = container;
+    constructor(wordContainerClassName, timerClassName, getAsyncWordsFunction, textFormat = `raw`) {
+        this.wordContainerClassName = wordContainerClassName;
+        this.handleKeyDown = this.handleKeyDownEvent.bind(this);
+        this.specialKeys = [`CapsLock`, `Tab`, `Enter`, `Escape`];
+        this.getAsyncWordsFunction = getAsyncWordsFunction;
+        this.textFormat = textFormat;
         this.currentWordIndex = 0;
         this.currentCharIndex = 0;
-        this.normalizedText = normalizedText;
-        this.getAsyncWordsFunction = getAsyncWordsFunction;
+        this.isTestRunning = false;
+
+        this.TimerclassName = timerClassName;
+        this.timeInSeconds = 10;
+        this.timerId = null;
+        this.currentTime = this.timeInSeconds;
 
         this.correctChars = 0;
         this.wrongChars = 0;
         this.missedChars = 0;
         this.excessChars = 0;
 
-
+        this.allTypedexcessChars = 0;
+        this.allTypedCorrectChars = 0;
+        this.allTypedWrongChars = 0;
     }
 
     async startNewTest() {
         if (!this.isTestRunning) {
-            this.wordsList = await this.getAsyncWordsFunction(60, this.normalizedText);
-            this.addWordsToHTML(this.wordsList, this.container);
-            this.wordContainer = document.querySelectorAll(this.container);
+            this.currentWordIndex = 0;
+            this.currentCharIndex = 0;
+            this.correctChars = 0;
+            this.wrongChars = 0;
+            this.missedChars = 0;
+            this.excessChars = 0;
+
+            this.updateTimerElement()
+            this.wordsList = await this.getAsyncWordsFunction(60, this.textFormat);
+            this.addWordsToHTML(this.wordsList, this.wordContainerClassName);
+            this.wordContainer = document.querySelectorAll(this.wordContainerClassName);
             this.allWords = this.wordContainer[0].children;
             this.addNewCursor(this.allWords[0], 0, `cursor-before`);
             this.addTestEventListeners();
-            this.isTestRunning = true;
         }
     }
 
-    restartSameTest() {
+    async restartSameTest() {
         this.stopTest();
+        this.stopTimer()
+        this.currentTime = this.timeInSeconds;
+        this.updateTimerElement()
+
         this.currentWordIndex = 0;
         this.currentCharIndex = 0;
 
@@ -41,27 +60,30 @@ class SpeedTypingTest{
         this.missedChars = 0;
         this.excessChars = 0;
 
-        this.addWordsToHTML(this.wordsList, this.container);
-        this.wordContainer = document.querySelectorAll(this.container);
+        this.resetHTMLelement(this.wordContainerClassName);
+        this.addWordsToHTML(this.wordsList, this.wordContainerClassName);
+        this.wordContainer = document.querySelectorAll(this.wordContainerClassName);
         this.allWords = this.wordContainer[0].children;
         this.addNewCursor(this.allWords[0], 0, `cursor-before`);
         this.addTestEventListeners();
-        this.isTestRunning = true;
     }
 
     stopTest() {
         if (this.isTestRunning) {
             this.removeTestEventListeners();
             this.isTestRunning = false;
+            const allWordsArray = Array.from(this.allWords);
+            const typedWords = allWordsArray.slice(0, this.currentWordIndex);
+            this.updateFinalCharScore(typedWords)
         }
     }
 
     addTestEventListeners(){
-        document.addEventListener('keydown', this.handleKeyDownEvent.bind(this));
+        document.addEventListener('keydown', this.handleKeyDown);
     }
 
     removeTestEventListeners(){
-        document.removeEventListener('keydown', this.handleKeyDownEvent.bind(this));
+        document.removeEventListener('keydown', this.handleKeyDown);
     }
 
     addWordsToHTML(wordsList, ContainerElement){
@@ -85,6 +107,10 @@ class SpeedTypingTest{
         this.lastTypedChar = this.allWords[this.currentWordIndex].children[this.currentCharIndex - 1]
         this.currentWordChildren = this.allWords[this.currentWordIndex].children
 
+        if(!this.isTestRunning){
+            this.startTimer()
+            this.isTestRunning = true;
+        }
         if (event.code == `Space`) {
             this.handleSpaceMove();
         }else if(event.code == `Backspace`){
@@ -93,25 +119,25 @@ class SpeedTypingTest{
             this.moveByOneCharacter(event);
         }else if(event.location == 0 && !this.specialKeys.includes(event.key)){
             this.addExcessCharacter(event);
-        }else if(event.key == `Escape`){
-            // start brand new test
         }else if(event.key == `Enter`){
-            // restart current test
+            this.restartSameTest();
+        }else if(event.key == `Escape`){
+            this.startNewTest();
         }
+
     }
 
     handleSpaceMove(){
-        let evaluationResult = this.evaluateWord(this.currentWordChildren);
+        let evaluationResult = this.evaluateWordClassName(this.currentWordChildren);
         if(evaluationResult){
             this.removePreviousCursor(this.currentWord, this.currentCharIndex);
             this.currentWord.className = evaluationResult;
             if(this.isLastElementOnNewRow()){
                 const topRowElements = this.getTopRowElements()
-                this.updateActualScoreCharScore(topRowElements)
-                this.removeHTMLelements(topRowElements)
+                this.updateFinalCharScore(topRowElements)
+                this.removeHTMLelementArray(topRowElements)
                 this.currentWordIndex = this.currentWordIndex - (topRowElements.length - 1)
                 this.addMoreWords(topRowElements.length)
-                console.log(this.wordsList)
             }else{
                 this.currentWordIndex++;
             }
@@ -145,7 +171,9 @@ class SpeedTypingTest{
 
     moveByOneCharacter(event){
         this.removePreviousCursor(this.currentWord, this.currentCharIndex);
-        this.currentCharacter.className = this.evaluateCharacter(this.currentCharacter, event.key);
+        const evaluationResult = this.evaluateCharClassName(this.currentCharacter, event.key)
+        evaluationResult ==  `correct-char` ? this.allTypedCorrectChars++ : this.allTypedWrongChars++;
+        this.currentCharacter.className = evaluationResult;
         this.addNewCursor(this.currentWord, this.currentCharIndex, `cursor-after`);
         this.currentCharIndex++;
     }
@@ -155,16 +183,17 @@ class SpeedTypingTest{
         const excessChar = document.createElement('span');
         excessChar.textContent = event.key;
         excessChar.className = `excess-char`;
+        this.allTypedexcessChars++;
         excessChar.classList.add(`cursor-after`); //...addNewCursor
         this.currentWord.appendChild(excessChar);
         this.currentCharIndex++;
     }
 
-    evaluateCharacter(currentChar, pressedKey) {
+    evaluateCharClassName(currentChar, pressedKey) {
         return currentChar.innerText === pressedKey ? `correct-char` : `wrong-char`;
     }
 
-    evaluateWord(nodeArray){
+    evaluateWordClassName(nodeArray){
         const letters = Array.from(nodeArray)
         if (letters.every((item) => item.classList.contains(`char`))){
             return false;
@@ -219,71 +248,91 @@ class SpeedTypingTest{
                 topRowWords.push(this.allWords[i])
             }
         }
-        return topRowWords
+        return Array.from(topRowWords)
     }
 
-    updateActualScoreCharScore(HTMLcollection){
-        for (let i = 0; i < HTMLcollection.length; i++){
-            for (let j = 0; j < HTMLcollection[i].children.length; j++){
-                if(HTMLcollection[i].children[j].classList.contains(`correct-char`)){
+    updateFinalCharScore(elementArray){
+        for (let i = 0; i < elementArray.length; i++){
+            for (let j = 0; j < elementArray[i].children.length; j++){
+                if(elementArray[i].children[j].classList.contains(`correct-char`)){
                     this.correctChars++
-                }else if(HTMLcollection[i].children[j].classList.contains(`wrong-char`)){
+                }else if(elementArray[i].children[j].classList.contains(`wrong-char`)){
                     this.wrongChars++
-                }else if(HTMLcollection[i].children[j].classList.contains(`char`)){
+                }else if(elementArray[i].children[j].classList.contains(`char`)){
                     this.missedChars++
-                }else if(HTMLcollection[i].children[j].classList.contains(`excess-char`)){
+                }else if(elementArray[i].children[j].classList.contains(`excess-char`)){
                     this.excessChars++
                 }
             }
         }
     }
 
-    removeHTMLelements(HTMLcollection){
+    removeHTMLelementArray(HTMLcollection){
         for (let i = HTMLcollection.length - 1; i >= 0; i--) {
             HTMLcollection[i].remove();
         }
     }
 
+    resetHTMLelement(HTMLelementClassName){
+        document.querySelector(HTMLelementClassName).innerHTML = ``;
+    }
+
     async addMoreWords(amount) {
-        const newWords = await this.getAsyncWordsFunction(amount, this.normalizedText);
+        const newWords = await this.getAsyncWordsFunction(amount, this.textFormat);
         this.wordsList = this.wordsList.concat(newWords);
-        this.addWordsToHTML(newWords, this.container);
-        this.wordContainer = document.querySelectorAll(this.container);
+        this.addWordsToHTML(newWords, this.wordContainerClassName);
+        this.wordContainer = document.querySelectorAll(this.wordContainerClassName);
         this.allWords = this.wordContainer[0].children;
     }
 
+    startTimer() {
+        this.timerId = setInterval(() => {
+            this.currentTime--;
+            if (this.currentTime <= 0) {
+                this.updateTimerElement();
+                this.stopTimer();
+                this.stopTest();
+            } else {
+                this.updateTimerElement();
+            }
+        }, 1000);
+    }
 
-    // then I need a function for replacing the amount that was removed
+    stopTimer() {
+        clearInterval(this.timerId);
+        this.timerId = null;
+    }
+
+    restartTimer() {
+        this.stopTimer();
+        this.currentTime = this.timeInSeconds;
+        this.updateTimerElement();
+        this.startTimer();
+    }
+
+    updateTimerElement() {
+        const minutes = Math.floor(this.currentTime / 60);
+        const seconds = this.currentTime % 60;
+        const formattedTime = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        const element = document.querySelector(this.TimerclassName);
+        if (element) {
+            element.textContent = formattedTime;
+        }
+    }
 
 }
 
-
-
-
-    // when space is pressed
-        // (get the length of the parent div * 2)
-        // get the length of all words until (current word)
-        // if all are more than (parent div * 2),
-            // update scoring somehow / or pass the words, should the score be already updated up until that point?
-            // remove top line
-
-
-
-function fakeWordFunction(){
-    return ["Apple", "Banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry", "apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry","apple", "banana", "orange", "pear", "grape", "pineapple", "kiwi", "watermelon", "strawberry", "blueberry"];
-}
-
-// const testInstance = new SpeedTypingTest(`.words`, true);
-// testInstance.startNewTest(fakeWordFunction);
-
-// console.log(testInstance.allWords)
 
 async function runTest() {
-    const testInstance = new SpeedTypingTest(`.words`, getWords, true);
+    const testInstance = new SpeedTypingTest(`.words`, `.timer`, getWords, `normalise`);
     await testInstance.startNewTest();
+    // setTimeout(() => {
+    //     testInstance.stopTest();
+    // }, 10000);
 }
 
 runTest();
+
 // testInstance.getElementLengthPX(
 
 

@@ -1,5 +1,5 @@
-// this is the master function
-export default async function getWordArrayFromAPI(n, normalize = false){
+// (n: number of words to get, textFormat: raw/normalise)
+export default async function getWordArrayFromAPI(n, textFormat = `raw`){
     let words = [];
     while(words.length < n){
         const authorList = await getAllAuthors()
@@ -8,8 +8,8 @@ export default async function getWordArrayFromAPI(n, normalize = false){
         let arrayOfLines = await getPoem(authorName);
 
         let stringOfLines = formatText(arrayOfLines);
-        if (normalize){
-            stringOfLines = normalizeText(stringOfLines);
+        if (textFormat == `normalise`){
+            stringOfLines = textFormatText(stringOfLines);
         }
 
         let arrayOfWords = stringOfLines.split(` `);
@@ -63,8 +63,8 @@ function formatText(array) {
         .replace(/  /g, ' ');
 }
 // remove punctuation, numbers, toLowerCase
-function normalizeText(text) {
-    const pattern = /[_\.,‘?!`~@#$%^&*()-=+[\]{}\\|;:'"<>\/0-9]/g;
+function textFormatText(text) {
+    const pattern = /[_\.,‘?!`~@#$%^&*()-=+[\]{}\\|;:'"<>\/0-9—]/g;
     return text.replace(pattern, '').toLowerCase()
 }
 
