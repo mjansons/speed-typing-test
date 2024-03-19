@@ -3,7 +3,6 @@ export default async function getWordArrayFromAPI(n, textFormat = `raw`){
     let words = [];
     while(words.length < n){
         const authorList = await getAllAuthors()
-        // const authorList = [`Anne Bronte`, `Mark Twain`]
         const authorName = selectRandom(authorList);
         let arrayOfLines = await getPoem(authorName);
 
@@ -54,7 +53,7 @@ function selectRandom(array){
 
 function formatText(array) {
     return array
-        .filter((line) => line !== '')
+        .filter((line) => line !== '' || line !== ' ' || line !== '  ')
         .map((filteredLine) => filteredLine.trim())
         .join(' ')
         .replace(/--/g, ' ')
