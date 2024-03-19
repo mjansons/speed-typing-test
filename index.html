@@ -4,17 +4,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="index.css">
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script type="module" src="main.js" defer></script>
-    <!-- <script type="module" src="graph.js" defer></script> -->
+    <script type="module" src="graph.js" defer></script>
 </head>
 <body>
-    <div>
-        <canvas id="myChart"></canvas>
-      </div>
-    <div class="timer"></div>
-    <div class="words">
+
+    <div class="stats" style="display: none">
+        <div class="wpm">
+            <h2>WPM</h2>
+            <h1>103</h1>
+        </div>
+        <div class="acc">
+            <h2>ACC</h2>
+            <h1>99%</h1>
+        </div>
+        <h1 class="judgement">You did better!</h1>
     </div>
+
+    <canvas id="myChart" class="stats" style="display: none"></canvas>
+
+    <div class="stats" style="display: none">
+        <div class="secondary-stats">
+            <h4 class="total-chars">total chars</h4>
+            <h3>103</h3>
+        </div>
+        <div class="secondary-stats">
+            <h4 class="correct">correct chars</h4>
+            <h3>133</h3>
+        </div>
+        <div class="secondary-stats">
+            <h4 class="wrong">wrong chars</h4>
+            <h3>133</h3>
+        </div>
+        <div class="secondary-stats">
+            <h4 class="excess">excess chars</h4>
+            <h3>133</h3>
+        </div>
+        <div class="secondary-stats">
+            <h4 class="missed">missed chars</h4>
+            <h3>133</h3>
+        </div>
+    </div>
+
+    <div class="timer test"></div>
+
+    <div class="words test"></div>
+
+    <div class="instructions">
+        <div class="esc">
+            <div class="key">esc</div>
+            <p>- start new test</p>
+        </div>
+        <div class="enter">
+            <div class="key">enter</div>
+            <p>- restart test</p>
+        </div>
+    </div>
+
 </body>
 </html>
 
