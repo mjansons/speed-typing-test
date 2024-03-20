@@ -54,7 +54,7 @@ export default class TestData{
         this.accuracyData = this.getFromLocalStorage(`accuracyData`) || [];
     }
 
-    async parseNewData(){
+    async processNewData(){
         // generated during test:
         this.allTypedexcessChars = this.testInstance.allTypedexcessChars;
         this.allTypedCorrectChars = this.testInstance.allTypedCorrectChars;
@@ -81,5 +81,35 @@ export default class TestData{
         this.storeInLocalStorage(this.datesData, `datesData`);
         this.storeInLocalStorage(this.wpmData, `wpmData`);
         this.storeInLocalStorage(this.accuracyData, `accuracyData`);
+    }
+
+    getSpeedJudgement(){
+        console.log(`wpm data length ${this.wpmData.length}`)
+        console.log(`wpm data ${this.wpmData}`)
+
+        if(this.wpmData.length > 1 && this.currentWpm > this.wpmData[this.wpmData.length -2]){
+            return `you were faster`
+        }else if(this.wpmData.length > 1 && this.currentWpm < this.wpmData[this.wpmData.length -2]){
+            return `you were slower`
+        }else if(this.wpmData.length > 1 && this.currentWpm == this.wpmData[this.wpmData.length -2]){
+            return `you maintained your speed`
+        }else{
+            return false
+        }
+    }
+
+    getAccuracyJudgement(){
+        console.log(`acc data length ${this.accuracyData.length}`)
+        console.log(`acc data ${this.accuracyData}`)
+        console.log(`current accuracy ${this.currentAcc}`)
+        if(this.accuracyData.length > 1 && this.currentAcc > this.accuracyData[this.accuracyData.length - 2]){
+            return `you were more accurate`
+        }else if(this.accuracyData.length > 1 && this.currentAcc < this.accuracyData[this.accuracyData.length - 2]){
+            return `you were less accurate`
+        }else if(this.accuracyData.length > 1 && this.currentAcc == this.accuracyData[this.accuracyData.length - 2]){
+            return `you maintained your accuracy`
+        }else{
+            return false
+        }
     }
 }

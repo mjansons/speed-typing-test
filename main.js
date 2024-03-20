@@ -12,9 +12,10 @@ const myChart = new Chart(ctx, chartSettings);
 async function runTest() {
     const firstTest = new SpeedTypingTest(`.words`, `.timer`, testDuration, getWords, `normalise`);
     const testData = new TestData(firstTest);
+
     testData.fetchAllStoredData();
     await firstTest.startNewTest();
-    await testData.parseNewData();
+    await testData.processNewData();
     testData.storeNewData();
     updateAllStats(testData)
     toggleDisplay(`.stats`, `.test`);
@@ -24,7 +25,7 @@ async function runTest() {
             testRuns = true;
             toggleDisplay(`.stats`, `.test`);
             await firstTest.startNewTest();
-            await testData.parseNewData();
+            await testData.processNewData();
             testData.storeNewData();
             updateAllStats(testData)
             toggleDisplay(`.stats`, `.test`)
@@ -33,7 +34,7 @@ async function runTest() {
             testRuns = true;
             toggleDisplay(`.stats`, `.test`);
             await firstTest.restartSameTest();
-            await testData.parseNewData();
+            await testData.processNewData();
             testData.storeNewData();
             updateAllStats(testData);
             toggleDisplay(`.stats`, `.test`);
@@ -81,4 +82,12 @@ function updateAllStats(dataInstance){
     updateHTMLelement(`.excess`, dataInstance.excessChars);
     updateHTMLelement(`.missed`, dataInstance.missedChars);
 
+    let speedJudgement = dataInstance.getSpeedJudgement();
+    let accJudgement = dataInstance.getAccuracyJudgement();
+
+    if (speedJudgement !== false){
+        updateHTMLelement(`.judgement`, `${speedJudgement} and ${accJudgement}`);
+    }else{
+        updateHTMLelement(`.judgement`, `Good job!`)
+    }
 }
