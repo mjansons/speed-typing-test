@@ -1,8 +1,8 @@
 export default class SpeedTypingTest{
-    constructor(wordContainerClassName, timerClassName, testDuration = 60, getAsyncWordsFunction, textFormat = `raw`) {
+    constructor(wordContainerClassName, timerClassName, getAsyncWordsFunction, textFormat = `raw`) {
         this.wordContainerClassName = wordContainerClassName;
         this.TimerclassName = timerClassName;
-        this.testDuration = testDuration;
+        this.testDuration = 5;
         this.getAsyncWordsFunction = getAsyncWordsFunction;
         this.textFormat = textFormat;
 
