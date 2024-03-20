@@ -2,51 +2,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="index.css">
+    <meta name="description" content="A speed typing test to improve your typing skills.">
+    <meta name="keywords" content="speed typing test, typing skills, typing test">
+    <title>Speed Typing Test</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/stats.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script type="module" src="main.js" defer></script>
-    <script type="module" src="display.js" defer></script>
+    <script type="module" src="js/main.js" defer></script>
+    <script type="module" src="js/display.js" defer></script>
 </head>
 <body>
-
-    <div class="stats" style="display: none">
-        <div>
-            <h2>WPM</h2>
-            <h1 class="wpm">103</h1>
-        </div>
-        <div>
-            <h2>ACC</h2>
-            <h1 class="acc">99%</h1>
+    <div class="stats top-stats" style="display: none">
+        <div class="primary-stats-container">
+            <div class="primary-stats">
+                <h2>WPM</h2>
+                <h1 class="wpm">103</h1>
+            </div>
+            <div class="primary-stats">
+                <h2>ACC</h2>
+                <h1 class="acc">99%</h1>
+            </div>
         </div>
         <h1 class="judgement">You did better!</h1>
     </div>
 
-    <div class="stats" style="display: none">
-        <p class="judgement"></p>
-    </div>
-
     <canvas id="myChart" class="stats" style="display: none"></canvas>
 
-    <div class="stats" style="display: none">
-        <div class="secondary-stats">
-            <h4>total chars</h4>
-            <h3 class="total">103</h3>
+    <div class="stats bottom-stats" style="display: none">
+        <div class="secondary-stats" title="total characters">
+            <h4>total:</h4>
+            <h3 class="total" >103</h3>
         </div>
-        <div class="secondary-stats">
-            <h4>correct chars</h4>
+        <div class="secondary-stats" title="correct characters">
+            <h4>correct:</h4>
             <h3 class="correct">133</h3>
         </div>
-        <div class="secondary-stats">
-            <h4>wrong chars</h4>
+        <div class="secondary-stats" title="wrong characters">
+            <h4>wrong:</h4>
             <h3 class="wrong">133</h3>
         </div>
-        <div class="secondary-stats">
-            <h4>excess chars</h4>
+        <div class="secondary-stats" title="excess characters">
+            <h4>excess:</h4>
             <h3 class="excess">133</h3>
         </div>
-        <div class="secondary-stats">
-            <h4>missed chars</h4>
+        <div class="secondary-stats" title="missed characters">
+            <h4>missed:</h4>
             <h3 class="missed">133</h3>
         </div>
     </div>
@@ -58,15 +58,13 @@
     <div class="instructions">
         <div class="esc">
             <div class="key">esc</div>
-            <p>- start new test</p>
+            <p> - start new test</p>
         </div>
         <div class="enter">
             <div class="key">enter</div>
-            <p>- restart test</p>
+            <p> - restart test</p>
         </div>
     </div>
 
 </body>
 </html>
-
-
