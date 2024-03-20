@@ -19,6 +19,7 @@ export default class TestData{
 
     constructor(testInstance){
         this.testInstance = testInstance;
+        this.testDuration = this.testInstance.testDuration;
     }
 
     getCurrentDateTime() {
@@ -53,29 +54,32 @@ export default class TestData{
         this.accuracyData = this.getFromLocalStorage(`accuracyData`) || [];
     }
 
-    parseNewData(){
+    async parseNewData(){
         // generated during test:
         this.allTypedexcessChars = this.testInstance.allTypedexcessChars;
         this.allTypedCorrectChars = this.testInstance.allTypedCorrectChars;
+        this.allTypedWrongChars = this.testInstance.allTypedWrongChars;
 
         // generated after test
         this.correctChars = this.testInstance.correctChars;
         this.wrongChars = this.testInstance.wrongChars;
         this.excessChars = this.testInstance.excessChars;
         this.missedChars = this.testInstance.missedChars;
+        this.totalChars =  this.correctChars + this.wrongChars + this.excessChars
 
+        this.AllTypedTotalChars = this.allTypedCorrectChars + this.allTypedWrongChars + this.allTypedexcessChars;
         this.currentWpm = Math.floor((this.correctChars * 60 / this.testDuration) / 4.7) // 4.7 == average word length in English
-        this.currentAcc =  Math.floor((this.allTypedCorrectChars / (this.allTypedCorrectChars + this.allTypedWrongChars + this.allTypedexcessChars)) * 100);
+        this.currentAcc =  Math.floor((this.allTypedCorrectChars / (this.AllTypedTotalChars + this.missedChars)) * 100);
 
-        const currentTime = getCurrentDateTime();
+        const currentTime = this.getCurrentDateTime();
         this.datesData.push(currentTime);
         this.wpmData.push(this.currentWpm);
         this.accuracyData.push(this.currentAcc);
     }
 
     async storeNewData(){
-        storeInLocalStorage(this.datesData, `datesData`);
-        storeInLocalStorage(this.wpmData, `wpmData`);
-        storeInLocalStorage(this.accuracyData, `accuracyData`);
+        this.storeInLocalStorage(this.datesData, `datesData`);
+        this.storeInLocalStorage(this.wpmData, `wpmData`);
+        this.storeInLocalStorage(this.accuracyData, `accuracyData`);
     }
 }

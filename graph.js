@@ -1,5 +1,3 @@
-const ctx = document.getElementById('myChart');
-
 export const chartSettings = {
     type: 'line',
     data: {
@@ -85,11 +83,9 @@ export function updateChartData(chart, newLabels, newWpmData, newAccuracyData) {
     chart.update();
 }
 
-const newLabels = ['someDate', 'someDate', 'someDate'];
-const newWpmData = [100, 160, 135];
-const newAccuracyData = [70, 50, 94];
 
-const myChart = new Chart(ctx, chartSettings);
+
+// const myChart = new Chart(ctx, chartSettings);
 
 // updateChartData(myChart, newLabels, newWpmData, newAccuracyData);
 

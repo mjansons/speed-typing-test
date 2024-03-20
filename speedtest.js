@@ -2,7 +2,7 @@ export default class SpeedTypingTest{
     constructor(wordContainerClassName, timerClassName, testDuration = 60, getAsyncWordsFunction, textFormat = `raw`) {
         this.wordContainerClassName = wordContainerClassName;
         this.TimerclassName = timerClassName;
-        this.timeInSeconds = testDuration;
+        this.testDuration = testDuration;
         this.getAsyncWordsFunction = getAsyncWordsFunction;
         this.textFormat = textFormat;
 
@@ -15,7 +15,7 @@ export default class SpeedTypingTest{
 
         this.isTestRunning = false;
         this.timerId = null;
-        this.currentTime = this.timeInSeconds;
+        this.currentTime = this.testDuration;
 
         this.allTypedexcessChars = 0;
         this.allTypedCorrectChars = 0;
@@ -37,7 +37,7 @@ export default class SpeedTypingTest{
         }
 
         this.stopTimer()
-        this.currentTime = this.timeInSeconds;
+        this.currentTime = this.testDuration;
         this.updateTimerElement()
 
         this.currentWordIndex = 0;
@@ -72,7 +72,7 @@ export default class SpeedTypingTest{
     async restartSameTest() {
         this.stopTest();
         this.stopTimer()
-        this.currentTime = this.timeInSeconds;
+        this.currentTime = this.testDuration;
         this.updateTimerElement()
 
         this.currentWordIndex = 0;
@@ -104,7 +104,7 @@ export default class SpeedTypingTest{
     async InternalStartNewTest() {
         this.stopTimer()
         this.isTestRunning = false;
-        this.currentTime = this.timeInSeconds;
+        this.currentTime = this.testDuration;
         this.updateTimerElement()
 
         this.currentWordIndex = 0;
@@ -129,7 +129,7 @@ export default class SpeedTypingTest{
     InternalRestartSameTest() {
         this.stopTest();
         this.stopTimer()
-        this.currentTime = this.timeInSeconds;
+        this.currentTime = this.testDuration;
         this.updateTimerElement()
 
         this.currentWordIndex = 0;
@@ -407,7 +407,7 @@ export default class SpeedTypingTest{
 
     restartTimer() {
         this.stopTimer();
-        this.currentTime = this.timeInSeconds;
+        this.currentTime = this.testDuration;
         this.updateTimerElement();
         this.startTimer();
     }
