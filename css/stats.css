@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+:root {
+    --dark-1: rgb(30, 29, 30);
+    --light-1: rgb(105, 95, 101);
+    --light-2: rgb(206, 194, 194);
+    --correct: rgb(160, 200, 156);
+    --wrong: rgb(247, 122, 122);
+    --extra: rgb(129, 30, 30);
+    --char-font-size: 24px;
+
+}
+
+/* statistics after test */
+
+.top-stats{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.primary-stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.primary-stats{
+    display: flex;
+    flex-direction: column;
+    margin: 0px 10px;
+
+    & h2{
+        margin: 0px;
+        font-weight: 500;
+        font-size: 20px;
+    }
+
+    & h1 {
+        margin: 0px;
+        line-height: 35px;
+    }
+}
+
+.wpm {
+    font-size: 40px;
+    color: var(--correct);
+}
+
+.acc {
+    font-size: 40px;
+    color: var(--wrong);
+}
+
+.judgement{
+    text-align: center;
+    color: var(--light-1);
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: 15%;
+    margin-right: 15%;
+    font-weight: 400;
+}
+
+h2, h4 {
+    color: var(--light-1);
+}
+
+canvas {
+    margin: 10px 15%;
+}
+
+h3 {
+    color: var(--light-2);
+    font-size: 24px;
+}
+
+.bottom-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    & h3{
+        margin: 0;
+        line-height: 24px;
+        text-align: center;
+    }
+
+    & h4 {
+        margin: 0;
+    }
+}
+
+.secondary-stats{
+    margin: 0px 30px;
+}
+
+.secondary-stats:hover {
+    cursor: pointer;
+}

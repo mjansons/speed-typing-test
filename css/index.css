@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+:root {
+    --dark-1: rgb(30, 29, 30);
+    --light-1: rgb(105, 95, 101);
+    --light-2: rgb(206, 194, 194);
+    --correct: rgb(160, 200, 156);
+    --wrong: rgb(247, 122, 122);
+    --extra: rgb(129, 30, 30);
+    --char-font-size: 24px;
+
+}
+
+* {
+    font-family: "Roboto Mono";
+}
+
+body {
+    margin: 0px;
+    padding: 5% 10px 10px 10px;
+    background-color: var(--dark-1);
+}
+
+
+/* Typing Test */
+span {
+    position: relative;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.cursor-before::before {
+    content: "";
+    position: absolute;
+    height: 27px;
+    width: 2px;
+    right: 95%;
+    background-color: var(--light-2);
+    animation: blink 1.5s infinite;
+}
+
+.cursor-after::after {
+    content: "";
+    position: absolute;
+    height: 27px;
+    width: 2px;
+    left: 95%;
+    background-color: var(--light-2);
+    animation: blink 1s infinite;
+}
+
+.timer {
+    width: fit-content;
+    margin: 10px auto;
+    color: var(--light-2);
+    font-size: 30px;
+}
+
+.words {
+    margin: 0px 20% 0px 20%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 125px;
+    overflow: hidden;
+}
+
+.word {
+    margin: 5px;
+    height: fit-content
+}
+
+.char {
+    font-size: var(--char-font-size);
+    color: var(--light-1);
+}
+
+.wrong-char {
+    font-size: var(--char-font-size);
+    color: var(--wrong);
+}
+
+.correct-char {
+    font-size: var(--char-font-size);
+    color: var(--correct);
+}
+
+.excess-char {
+    font-size: var(--char-font-size);
+    color: var(--extra);
+}
+
+.wrong-word {
+    margin: 5px;
+    text-decoration: underline;
+    text-decoration-color: var(--wrong);
+    text-underline-offset: 3px
+}
+
+.correct-word {
+    margin: 5px;
+}
+
+
+/* Instructions  */
+
+.instructions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 20%;
+}
+
+.esc, .enter{
+    display: flex;
+    margin: 10px 10px;
+
+    & p{
+        color: var(--light-1);
+        font-size: 16px;
+        padding: 0px;
+        margin: 0px 10px;
+        white-space: nowrap;
+    }
+    & .key{
+        font-size: 16px;
+        box-sizing: content-box;
+        color: var(--dark-1);
+        line-height: 18px;
+        display: flex;
+        background-color: var(--light-1);
+        border-radius: 2px;
+        padding: 1px 5px;
+    }
+
+}
