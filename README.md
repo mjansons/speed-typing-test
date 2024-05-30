@@ -35,6 +35,12 @@
 - **Character Handling**
   - Excess characters are also added to the text.
 
+### Get started
+- **Clone this git repository
+  - https://github.com/mjansons/speed-typing-test.git
+- **Run Live Server
+  - enjoy
+
 ### Screenshots
 
 <img width="1463" alt="Screenshot 2024-05-30 at 16 23 23" src="https://github.com/mjansons/latvian-language-learning-app/assets/123810415/744d2a0b-689e-49a2-8546-263e721c1fe1">
