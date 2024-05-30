@@ -19,6 +19,7 @@
 
 - **Typing Constraints**
   - Not able to go back after a correctly typed word.
+  - Option in code to easily change it.
 
 - **Local Storage Metrics**
   - Metrics are stored in local storage for persistence.
@@ -44,6 +45,7 @@
 ### Screenshots
 
 <img width="1463" alt="Screenshot 2024-05-30 at 16 23 23" src="https://github.com/mjansons/latvian-language-learning-app/assets/123810415/744d2a0b-689e-49a2-8546-263e721c1fe1">
+<img width="1459" alt="Screenshot 2024-05-30 at 16 49 10" src="https://github.com/mjansons/speed-typing-test/assets/123810415/db386f83-301d-4975-b2d7-b03f821edea9">
 <img width="1462" alt="Screenshot 2024-05-30 at 16 24 19" src="https://github.com/mjansons/latvian-language-learning-app/assets/123810415/85785ef2-f59d-44c2-a8bc-8bf488bb499e">
 <img width="494" alt="Screenshot 2024-05-30 at 16 23 45" src="https://github.com/mjansons/latvian-language-learning-app/assets/123810415/434a8a97-ef80-416b-a34e-9ac0292ebb2a">
 
